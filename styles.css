@@ -1,0 +1,239 @@
+:root {
+    --color-primary: #1a1a1a;
+    --color-secondary: #666666;
+    --color-background: #ffffff;
+    --color-accent: #f5f5f5;
+    --spacing-unit: 1rem;
+    --max-width: 1200px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--color-primary);
+    background: url('factory-cooking.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100%;
+    position: relative;
+}
+
+/* Overlay for readability */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100%;
+    background: rgba(20, 20, 20, 0.7);
+    z-index: 0;
+    pointer-events: none;
+}
+
+main, .header, .footer {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+}
+
+.menu-section, .menu-weeks, .menu-week, .menu-week h3, .menu-week li, .menu-week li strong, .section-title {
+    color: #fff !important;
+    background: transparent !important;
+}
+
+.menu-week {
+    background: rgba(40, 40, 40, 0.6) !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.section-title {
+    color: #fff;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-unit);
+}
+
+/* Header & Navigation */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem var(--spacing-unit);
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--color-secondary);
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 var(--spacing-unit);
+    background-color: var(--color-accent);
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    letter-spacing: 2px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+    font-weight: 300;
+}
+
+/* Menu Section */
+.menu-section {
+    padding: 6rem 0;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 3rem;
+    letter-spacing: 1px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 0 var(--spacing-unit);
+}
+
+.menu-weeks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.menu-week {
+    background: var(--color-accent);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    animation: fadeIn 1s ease;
+}
+
+.menu-week h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+.menu-week ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.menu-week li {
+    font-size: 1rem;
+    color: var(--color-secondary);
+    margin-bottom: 0.7rem;
+    padding-left: 0.2rem;
+}
+
+.menu-week li strong {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--color-accent);
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-title, .hero-subtitle {
+    animation: fadeIn 1s ease-out;
+} 
