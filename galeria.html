@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Cocina</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 1rem 2rem 1rem;
+        }
+        .gallery-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+        .gallery-item {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        .gallery-item:hover {
+            transform: translateY(-6px) scale(1.03);
+        }
+        .gallery-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .gallery-caption {
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #222;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <h1 class="gallery-title">Galería de Cocina</h1>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img class="gallery-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Pan casero">
+                <div class="gallery-caption">Pan casero</div>
+            </div>
+            <div class="gallery-item">
+                <img class="gallery-img" src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=600&q=80" alt="Ensalada fresca">
+                <div class="gallery-caption">Ensalada fresca</div>
+            </div>
+            <div class="gallery-item">
+                <img class="gallery-img" src="https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=600&q=80" alt="Pasta italiana">
+                <div class="gallery-caption">Pasta italiana</div>
+            </div>
+            <div class="gallery-item">
+                <img class="gallery-img" src="https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=600&q=80" alt="Hamburguesa gourmet">
+                <div class="gallery-caption">Hamburguesa gourmet</div>
+            </div>
+            <div class="gallery-item">
+                <img class="gallery-img" src="https://images.unsplash.com/photo-1514512364185-4c2b67857b39?auto=format&fit=crop&w=600&q=80" alt="Sopa de verduras">
+                <div class="gallery-caption">Sopa de verduras</div>
+            </div>
+            <div class="gallery-item">
+                <img class="gallery-img" src="https://images.unsplash.com/photo-1506089676908-3592f7389d4d?auto=format&fit=crop&w=600&q=80" alt="Tarta de frutas">
+                <div class="gallery-caption">Tarta de frutas</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
