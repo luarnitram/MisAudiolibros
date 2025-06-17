@@ -10,15 +10,31 @@ let paginaActual = 1;
 const LIBROS_POR_PAGINA = 20;
 
 function cargarLibros() {
-    libros = JSON.parse(localStorage.getItem('libros_guardados') || '[]');
-    // Ordenar alfabéticamente por autor
-    libros.sort((a, b) => {
-        const autorA = (a.author || '').toLowerCase();
-        const autorB = (b.author || '').toLowerCase();
-        if (autorA < autorB) return -1;
-        if (autorA > autorB) return 1;
-        return 0;
-    });
+    try {
+        // Usar el sistema de autenticación si está disponible
+        if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+            libros = auth.getUserBooks();
+            console.log('Libros cargados del usuario:', libros.length);
+        } else {
+            // Fallback al sistema anterior si no hay autenticación
+            libros = JSON.parse(localStorage.getItem('libros_guardados') || '[]');
+            console.log('Libros cargados desde localStorage:', libros.length);
+        }
+        
+        // Ordenar alfabéticamente por autor
+        libros.sort((a, b) => {
+            const autorA = (a.author || '').toLowerCase();
+            const autorB = (b.author || '').toLowerCase();
+            if (autorA < autorB) return -1;
+            if (autorA > autorB) return 1;
+            return 0;
+        });
+        
+        console.log('Libros ordenados y listos para mostrar');
+    } catch (error) {
+        console.error('Error al cargar libros:', error);
+        libros = [];
+    }
 }
 
 function renderLista(filtro = '') {
@@ -97,7 +113,16 @@ function renderLista(filtro = '') {
                 const idxEnLibros = libros.findIndex(l => l.title === libro.title && l.author === libro.author);
                 if (idxEnLibros !== -1) {
                     libros.splice(idxEnLibros, 1);
-                    localStorage.setItem('libros_guardados', JSON.stringify(libros));
+                    
+                    // Usar el sistema de autenticación si está disponible
+                    if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+                        auth.removeBook(libro.title, libro.author);
+                        console.log('Libro removido del usuario:', auth.getCurrentUser().username);
+                    } else {
+                        // Fallback al sistema anterior
+                        localStorage.setItem('libros_guardados', JSON.stringify(libros));
+                    }
+                    
                     renderLista(buscador.value);
                 }
                 modal.style.display = 'none';
@@ -148,8 +173,18 @@ function mostrarDetalle(idx) {
     `;
     detallePanel.style.display = 'flex';
     document.getElementById('borrar-libro-btn').onclick = function() {
+        const libro = libros[idx];
         libros.splice(idx, 1);
-        localStorage.setItem('libros_guardados', JSON.stringify(libros));
+        
+        // Usar el sistema de autenticación si está disponible
+        if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+            auth.removeBook(libro.title, libro.author);
+            console.log('Libro removido del usuario:', auth.getCurrentUser().username);
+        } else {
+            // Fallback al sistema anterior
+            localStorage.setItem('libros_guardados', JSON.stringify(libros));
+        }
+        
         libroSeleccionadoIdx = null;
         cargarLibros();
         renderLista(buscador.value);
