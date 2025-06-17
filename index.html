@@ -6,11 +6,17 @@
     <title>Libros Leídos - Home</title>
     <link rel="stylesheet" href="libros.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-</header>
+</head>
+<body>
     <header class="header">
         <nav>
             <span class="logo">AUDIOLIBROS ESCUCHADOS</span>
-            <a href="mis-libros.html" class="nav-link">Mis libros leídos</a>
+            <div class="nav-links">
+                <a href="mis-libros.html" class="nav-link">Mis libros leídos</a>
+                <span id="user-info" class="user-info"></span>
+                <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">Cerrar Sesión</button>
+                <a href="login.html" id="login-link" class="nav-link" style="display: none;">Iniciar Sesión</a>
+            </div>
         </nav>
     </header>
     <main class="main-busqueda">
@@ -46,10 +52,43 @@
         </div>
         <div class="resultado-detalle" id="resultado-detalle"></div>
     </main>
+    <script src="auth.js"></script>
     <script src="libros.js"></script>
     <script>
-    // Búsqueda automática por autor si viene en la URL
-    window.addEventListener('DOMContentLoaded', function() {
+    // Verificar autenticación al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        const userInfo = document.getElementById('user-info');
+        const logoutBtn = document.getElementById('logout-btn');
+        const loginLink = document.getElementById('login-link');
+        
+        // Verificar si hay un usuario logueado
+        if (auth.isLoggedIn()) {
+            // Usuario logueado - mostrar información del usuario y botón de logout
+            const currentUser = auth.getCurrentUser();
+            if (userInfo && currentUser) {
+                userInfo.textContent = `👤 ${currentUser.username}`;
+                userInfo.style.display = 'inline';
+            }
+            if (logoutBtn) {
+                logoutBtn.style.display = 'inline-block';
+            }
+            if (loginLink) {
+                loginLink.style.display = 'none';
+            }
+        } else {
+            // Usuario no logueado - mostrar enlace de login
+            if (userInfo) {
+                userInfo.style.display = 'none';
+            }
+            if (logoutBtn) {
+                logoutBtn.style.display = 'none';
+            }
+            if (loginLink) {
+                loginLink.style.display = 'inline';
+            }
+        }
+        
+        // Búsqueda automática por autor si viene en la URL
         const params = new URLSearchParams(window.location.search);
         const autor = params.get('autor');
         if (autor) {
