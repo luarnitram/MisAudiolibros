@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiolibros Escuchados - Inicio</title>
+    <link rel="stylesheet" href="libros.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .welcome-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .welcome-logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        .welcome-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .welcome-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .welcome-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .welcome-btn.secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .welcome-btn.secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .loading {
+            color: #666;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <div class="welcome-logo">📚 Audiolibros Escuchados</div>
+            <div class="welcome-subtitle">Tu biblioteca personal de audiolibros</div>
+            <div id="loading" class="loading">Verificando sesión...</div>
+            <div id="buttons" class="welcome-buttons" style="display: none;">
+                <a href="index.html" class="welcome-btn">Ir al Dashboard</a>
+                <button onclick="logout()" class="welcome-btn secondary">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const loading = document.getElementById('loading');
+                const buttons = document.getElementById('buttons');
+                
+                if (auth.isLoggedIn()) {
+                    loading.textContent = `¡Bienvenido de vuelta, ${auth.getCurrentUser().username}!`;
+                    buttons.style.display = 'flex';
+                } else {
+                    window.location.href = 'login.html';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 
