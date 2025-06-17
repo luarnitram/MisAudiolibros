@@ -173,24 +173,78 @@ function renderEstrellasHTML(n) {
 }
 
 function guardarLibro(idx, btn) {
-    const libro = resultados[idx];
+    try {
+        const libro = resultados[idx];
         const libroAGuardar = {
             title: libro.title || '',
             author: libro.authors ? libro.authors.join(', ') : '',
             cover: libro.imageLinks && libro.imageLinks.thumbnail ? libro.imageLinks.thumbnail : '',
             sinopsis: libro.description || '',
             review: '',
-            stars: libro.averageRating || 0
+            stars: libro.averageRating || 0,
+            addedAt: new Date().toISOString()
         };
-        let libros = JSON.parse(localStorage.getItem('libros_guardados') || '[]');
-        libros.push(libroAGuardar);
-        localStorage.setItem('libros_guardados', JSON.stringify(libros));
-    btn.textContent = '¡Guardado!';
-    btn.disabled = true;
-    setTimeout(() => {
-        btn.textContent = 'Agregar';
-        btn.disabled = false;
-    }, 2000);
+        
+        // Usar el sistema de autenticación para guardar el libro
+        if (typeof auth !== 'undefined' && auth.isLoggedIn()) {
+            const userBooks = auth.getUserBooks();
+            const libroExiste = userBooks.some(l => l.title === libroAGuardar.title && l.author === libroAGuardar.author);
+            
+            if (libroExiste) {
+                btn.textContent = 'Ya guardado';
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.textContent = 'Agregar';
+                    btn.disabled = false;
+                }, 2000);
+                return;
+            }
+            
+            auth.addBook(libroAGuardar);
+            
+            // Log para depuración
+            console.log('Libro guardado para usuario:', auth.getCurrentUser().username);
+            console.log('Total de libros del usuario:', auth.getUserBooks().length);
+            
+            btn.textContent = '¡Guardado!';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = 'Agregar';
+                btn.disabled = false;
+            }, 2000);
+        } else {
+            // Fallback al sistema anterior si no hay autenticación
+            let libros = JSON.parse(localStorage.getItem('libros_guardados') || '[]');
+            const libroExiste = libros.some(l => l.title === libroAGuardar.title && l.author === libroAGuardar.author);
+            
+            if (libroExiste) {
+                btn.textContent = 'Ya guardado';
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.textContent = 'Agregar';
+                    btn.disabled = false;
+                }, 2000);
+                return;
+            }
+            
+            libros.push(libroAGuardar);
+            localStorage.setItem('libros_guardados', JSON.stringify(libros));
+            
+            btn.textContent = '¡Guardado!';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = 'Agregar';
+                btn.disabled = false;
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Error al guardar libro:', error);
+        btn.textContent = 'Error';
+        setTimeout(() => {
+            btn.textContent = 'Agregar';
+            btn.disabled = false;
+        }, 2000);
+    }
 }
 
 function renderDetalle(idx) {
@@ -289,4 +343,24 @@ saveBookBtn.addEventListener('click', () => {
     localStorage.setItem('libros_guardados', JSON.stringify(libros));
     saveBookBtn.textContent = '¡Guardado!';
     setTimeout(() => saveBookBtn.textContent = 'Guardar libro', 2000);
+});
+
+// --- Inicialización y verificación de localStorage ---
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar que localStorage esté disponible
+    if (typeof(Storage) !== "undefined") {
+        console.log('localStorage está disponible');
+        
+        // Verificar libros existentes
+        const librosGuardados = JSON.parse(localStorage.getItem('libros_guardados') || '[]');
+        console.log('Libros guardados al cargar la página:', librosGuardados.length);
+        
+        // Mostrar información en la consola para depuración
+        if (librosGuardados.length > 0) {
+            console.log('Libros existentes:', librosGuardados.map(l => `${l.title} - ${l.author}`));
+        }
+    } else {
+        console.error('localStorage no está disponible en este navegador');
+        alert('Tu navegador no soporta el almacenamiento local. Los libros no se guardarán.');
+    }
 }); 
