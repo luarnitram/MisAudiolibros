@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Libros Leídos</title>
+    <link rel="stylesheet" href="libros.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <nav>
+            <a href="index.html" class="nav-link">Inicio</a>
+            <span class="logo">Mis libros leídos</span>
+        </nav>
+    </header>
+    <main class="main-panel vertical-layout autor-layout">
+        <input type="text" id="buscador-libros" placeholder="Buscar por título o autor..." class="buscador-lista">
+        <ul class="libros-lista" id="libros-lista"></ul>
+        <section class="detalle-panel" id="detalle-panel" style="display:none;"></section>
+        <section class="panel-autor" id="panel-autor" style="display:none;"></section>
+    </main>
+    <div id="modal-portada" class="modal-portada" style="display:none;">
+        <div class="modal-portada-bg"></div>
+        <div class="modal-portada-content">
+            <span class="modal-portada-close">&times;</span>
+            <img id="modal-portada-img" src="" alt="Portada ampliada">
+        </div>
+    </div>
+    <script src="mis-libros.js"></script>
+</body>
+</html> 
