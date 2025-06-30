@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libros Leídos - Home</title>
+    <link rel="stylesheet" href="libros.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .book-search-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+            transition: background-color 0.2s;
+            background: #232526;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        .book-search-card:hover {
+            background-color: #2c2e2f;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .book-search-cover {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .book-search-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        .book-search-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f5f5f5 !important;
+            margin: 0 0 0.25rem 0;
+        }
+        .book-search-author {
+            font-size: 0.95rem;
+            color: #ccc !important;
+            margin: 0 0 0.5rem 0;
+        }
+        .book-search-date {
+            margin: 0;
+        }
+        .book-search-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .autores-search-container {
+            position: relative;
+            display: flex;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+        .autores-search-input {
+            padding-right: 3rem !important; /* Espacio para el botón */
+        }
+        .autores-search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            padding: 0 1rem;
+            cursor: pointer;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .autores-search-btn:hover {
+            color: #f8991c;
+        }
+        .autor-follow-btn.unfollow {
+            background-color: #555;
+            color: #fff;
+        }
+        .autor-follow-btn.unfollow:hover {
+            background-color: #e74c3c;
+        }
+        .autores-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .autores-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .filter-label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 28px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+        }
+        input:checked + .slider {
+          background-color: #3498db;
+        }
+        input:focus + .slider {
+          box-shadow: 0 0 1px #3498db;
+        }
+        input:checked + .slider:before {
+          transform: translateX(22px);
+        }
+        .slider.round {
+          border-radius: 28px;
+        }
+        .slider.round:before {
+          border-radius: 50%;
+        }
+        @media (max-width: 600px) {
+            .book-search-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .book-search-cover {
+                 margin-bottom: 1rem;
+            }
+            .book-search-actions {
+                flex-direction: row;
+                width: 100%;
+                margin-top: 1rem;
+                margin-left: 0;
+            }
+        }
+        .busqueda-container {
+            position: relative;
+            width: 100%;
+        }
+        .busqueda-input {
+            padding-right: 4rem !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .busqueda-lupa-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            padding: 0 1rem;
+            cursor: pointer;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .busqueda-lupa-btn:hover {
+            color: #f8991c;
+            background: transparent;
+        }
+        .busqueda-hint {
+            font-size: 0.8rem;
+            color: #888;
+            text-align: left;
+            margin-top: 0.5rem;
+            margin-left: 0.2rem;
+        }
+        .clickable-author {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .clickable-author:hover {
+            color: #f8991c !important;
+            text-decoration: underline;
+        }
+
+        .author-detail-panel {
+            background: #232526;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            padding: 2rem;
+            margin: 1.2rem auto;
+            max-width: 900px;
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .author-photo-placeholder {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background-color: #333;
+            color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .author-detail-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .author-detail-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        #panel-autores-seguidos {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        #autores-sidebar {
+            flex: 0 0 25%;
+            background: #1e1e1e;
+            padding: 1.5rem;
+            border-radius: 12px;
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #autores-sidebar-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #autores-sidebar-controls input,
+        #autores-sidebar-controls select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background: #2c2e2f;
+            color: #f5f5f5;
+            border: 1px solid #444;
+            font-size: 0.95rem;
+        }
+
+        #followed-authors-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        #followed-authors-list li {
+            padding: 0.9rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        #followed-authors-list li:hover {
+            background-color: #2c2e2f;
+        }
+
+        #followed-authors-list li.active {
+            background-color: #f8991c;
+            color: #181a1b;
+            font-weight: 700;
+        }
+
+        #autores-main-content {
+            flex: 1;
+            min-width: 0; /* Previene que el contenido interno rompa el layout */
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-books-view {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            flex-grow: 1;
+            min-height: 0;
+        }
+        .author-books-column {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .author-books-column h3 {
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            border-bottom-width: 2px;
+            border-bottom-style: solid;
+        }
+        .author-books-column .libros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1.5rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #181a1b;
+            border-radius: 8px;
+        }
+
+        #autores-resultados-lista {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-height: 0;
+        }
+
+        .detalle-modal-sinopsis {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            color: #ccc;
+            font-size: 0.9rem;
+            padding-right: 10px;
+        }
+
+        .author-book-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+        .author-book-row:last-child {
+            border-bottom: none;
+        }
+        .author-book-cover {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .author-book-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .author-book-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+            color: #eee;
+        }
+        .author-book-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .top-bar-nav {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem; /* Espacio entre botones */
+        }
+        .top-bar-btn {
+            background: none;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            color: #999; /* Color por defecto para los botones inactivos */
+        }
+        .top-bar-btn.active {
+            /* El color se aplicará desde el style en el HTML */
+        }
+        .top-bar-btn:hover {
+            color: #fff;
+        }
+
+        .nav-slider {
+            position: absolute;
+            bottom: -5px; /* Un poco más cerca del texto */
+            height: 3px;
+            border-radius: 1.5px;
+            transition: left 0.3s ease-in-out, width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        /* Estilos de la Estantería Virtual */
+        .bookshelf-container {
+            width: 100%;
+            padding: 1rem 2rem;
+        }
+        .bookshelf-controls {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .bookshelf-controls select, .bookshelf-controls input {
+            background-color: #2c2e2f;
+            color: #f5f5f5;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+        }
+        .bookshelf {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem; /* Espacio vertical entre estantes */
+        }
+        .shelf {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem; /* Espacio entre libros */
+            padding-bottom: 1rem;
+            /* border-bottom: 4px solid #1a1a1a; */ /* Eliminado para un look flotante */
+        }
+        .book-cover-item {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease-out;
+        }
+        .book-cover-item:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        .book-cover-item img {
+            width: 130px;
+            height: 195px;
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .book-info-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 0 0 5px 5px;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            pointer-events: none;
+        }
+        .book-cover-item:hover .book-info-overlay {
+            opacity: 1;
+        }
+        .book-info-overlay-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-info-overlay-author {
+            font-size: 0.8rem;
+            color: #ccc;
+            margin: 0;
+        }
+
+        .detalle-modal-content {
+            flex-direction: row; /* Layout horizontal */
+            align-items: flex-start; /* Alinear arriba */
+            text-align: left; /* Alinear texto a la izquierda */
+            max-width: 750px; /* Panel más ancho */
+        }
+        .detalle-modal-cover {
+            width: 180px; /* Tamaño de portada consistente */
+            height: 270px;
+            margin-bottom: 0;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        .detalle-modal-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .detalle-metadata-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-start; /* Alinear píldoras a la izquierda */
+            margin: 1rem 0;
+        }
+        .metadata-pill {
+            background-color: #333;
+            color: #ddd;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .metadata-pill strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .detalle-modal-main {
+            display: flex;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        .detalle-col-izq, .detalle-col-der {
+            display: flex;
+            flex-direction: column;
+        }
+        .detalle-col-izq {
+            align-items: center;
+        }
+        .detalle-col-der {
+            flex-grow: 1;
+        }
+        .detalle-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .star-rating {
+            display: flex;
+            gap: 0.2rem;
+            cursor: pointer;
+        }
+        .star-rating .star {
+            font-size: 1.5rem;
+            color: #555;
+            transition: color 0.2s;
+        }
+        .star-rating .star:hover,
+        .star-rating .star.active {
+            color: #f39c12;
+        }
+
+        .detalle-modal-content {
+            flex-direction: column; /* Cambiado a columna para el título arriba */
+            align-items: flex-start;
+            text-align: left; /* Alinear texto a la izquierda */
+            max-width: 750px; /* Panel más ancho */
+        }
+        .detalle-modal-cover {
+            width: 180px; /* Tamaño de portada consistente */
+            height: 270px;
+            margin-bottom: 0;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        .detalle-modal-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .detalle-metadata-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-start; /* Alinear píldoras a la izquierda */
+            margin: 1rem 0;
+        }
+        .metadata-pill {
+            background-color: #333;
+            color: #ddd;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .metadata-pill strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        /* Estilos para la sección de Sugerencias NYT */
+        #panel-sugerencias {
+            padding: 1rem 2rem;
+        }
+        #nyt-list-selector {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 2rem;
+        }
+        .nyt-bestsellers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .nyt-book-item {
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1.5rem;
+        }
+        .nyt-book-item:last-child {
+            border-bottom: none;
+        }
+        .nyt-rank {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #555;
+            min-width: 40px;
+            text-align: center;
+        }
+        .nyt-book-info {
+            flex-grow: 1;
+        }
+        .nyt-book-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f5f5f5;
+            margin: 0 0 0.25rem 0;
+        }
+        .nyt-book-author {
+            font-size: 1rem;
+            color: #aaa;
+            margin-bottom: 0.75rem;
+        }
+        .nyt-book-description {
+            font-size: 1rem;
+            color: #ccc;
+            line-height: 1.6;
+        }
+        .nyt-cover-image {
+            width: 150px;
+            flex-shrink: 0;
+        }
+        .nyt-cover-image img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        /* Estilos para la Nueva sección de Sugerencias NYT */
+        .sugerencias-container {
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .suggestion-list-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #f5f5f5;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .nyt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .nyt-list-item {
+            display: grid;
+            grid-template-columns: 60px 1fr 150px;
+            gap: 2rem;
+            align-items: start;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .nyt-list-item:hover {
+            background-color: #2c2e2f;
+        }
+        .nyt-list-item:last-child {
+            border-bottom: none;
+        }
+        .nyt-item-rank {
+            font-size: 2.5rem;
+            color: #666;
+            font-weight: 200;
+            text-align: center;
+            padding-top: 0.5rem;
+        }
+        .nyt-item-info .title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #f5f5f5;
+            margin: 0;
+        }
+        .nyt-item-info .author {
+            font-size: 1rem;
+            color: #bbb;
+            margin: 0.25rem 0 1rem 0;
+        }
+        .nyt-item-info .description {
+            font-size: 1rem;
+            color: #999;
+            line-height: 1.6;
+        }
+        .nyt-item-cover img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .detalle-modal-content {
+            flex-direction: column; /* Cambiado a columna para el título arriba */
+            align-items: flex-start;
+            text-align: left; /* Alinear texto a la izquierda */
+            max-width: 750px; /* Panel más ancho */
+        }
+        .detalle-modal-cover {
+            width: 180px; /* Tamaño de portada consistente */
+            height: 270px;
+            margin-bottom: 0;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        .detalle-modal-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .detalle-metadata-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-start; /* Alinear píldoras a la izquierda */
+            margin: 1rem 0;
+        }
+        .metadata-pill {
+            background-color: #333;
+            color: #ddd;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .metadata-pill strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .nyt-lists-nav {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 10px; /* Para que la barra de scroll no se pegue */
+            overflow-x: auto; /* Scroll horizontal en móvil */
+            white-space: nowrap;
+        }
+        .nyt-list-pill {
+            background-color: #333;
+            color: #ddd;
+            border: none;
+            border-radius: 20px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .nyt-list-pill:hover {
+            background-color: #444;
+            color: #fff;
+        }
+        .nyt-list-pill.active {
+            background-color: #f39c12;
+            color: #111;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(243, 156, 18, 0.2);
+        }
+
+        .detalle-modal-content {
+            flex-direction: column; /* Cambiado a columna para el título arriba */
+            align-items: flex-start;
+            text-align: left; /* Alinear texto a la izquierda */
+            max-width: 750px; /* Panel más ancho */
+        }
+
+        .detalle-acciones-extra {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .detalle-accion-btn {
+            background-color: #333;
+            color: #ddd;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .detalle-accion-btn.delete {
+            background-color: #5c2c2c;
+        }
+        .detalle-accion-btn.delete:hover {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        .detalle-accion-btn:hover {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .detalle-notas-container {
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .detalle-notas-container h4 {
+            margin-bottom: 0.5rem;
+            color: #ccc;
+        }
+        .detalle-notas-textarea {
+            width: 100%;
+            min-height: 100px;
+            background-color: #1e1e1e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #f5f5f5;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        /* Estilos para el layout del menú superior */
+        .top-bar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: #232526;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .top-bar-nav {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar-container {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .top-bar-nav {
+                width: 100%;
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+            
+            .user-info {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .author-books-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            background: #181a1b;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar-container">
+        <div class="top-bar-nav">
+            <button id="btn-buscar-libros" class="top-bar-btn active" style="color: #2ecc71;">Buscar libros</button>
+            <button id="btn-autores" class="top-bar-btn" style="color: #9b59b6;">Autores que sigo</button>
+            <button id="btn-libros-leidos" class="top-bar-btn" style="color: #f39c12;">Libros leídos</button>
+            <button id="btn-libros-a-leer" class="top-bar-btn" style="color: #3498db;">Quiero leer!</button>
+            <button id="btn-sugerencias" class="top-bar-btn" style="color: #e74c3c;">Sugerencias</button>
+            <span class="nav-slider"></span>
+        </div>
+        <div class="user-info" id="user-info-container">
+            <span id="user-greeting"></span>
+            <button id="logout-btn" class="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </button>
+        </div>
+    </div>
+    <!-- Justo después del menú principal -->
+    <div id="nyt-tabs-bar"></div>
+    <main class="main-busqueda">
+        <div class="search-panel" id="search-panel">
+            <div class="busqueda-centrada">
+                <form id="book-form">
+                    <div class="busqueda-container">
+                        <input type="text" id="search-input" class="busqueda-input" placeholder="Buscar título o autor" autocomplete="off">
+                        <button type="submit" class="busqueda-lupa-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="busqueda-hint">Usar "" para búsquedas específicas (ej: "it stephen king")</div>
+                </form>
+                
+                <!-- Contenedor de resultados dentro del mismo panel -->
+                <div id="api-indicator" style="display: none; text-align: center; margin: 1rem 0; padding: 0.5rem; background: #232526; border-radius: 8px; color: #39ff14; font-size: 0.9rem; font-weight: 500;"></div>
+                
+                <div id="sort-controls" style="display: none; margin: 1rem 0; text-align: right;">
+                    <label for="sort-select" style="color: #ccc; margin-right: 0.5rem;">Ordenar por:</label>
+                    <select id="sort-select" style="padding: 0.5rem; border-radius: 8px; background: #2c2e2f; color: #f5f5f5; border: 1px solid #444;">
+                        <option value="relevance">Relevancia</option>
+                        <option value="newest">Más nuevos</option>
+                    </select>
+                </div>
+
+                <div id="language-filter-controls" style="display: none; margin: 1rem 0; text-align: right;">
+                    <label for="language-select" style="color: #ccc; margin-right: 0.5rem;">Idioma:</label>
+                    <select id="language-select" style="padding: 0.5rem; border-radius: 8px; background: #2c2e2f; color: #f5f5f5; border: 1px solid #444;">
+                        <option value="all">Todos (Inglés/Español)</option>
+                        <option value="es">Español</option>
+                        <option value="en">Inglés</option>
+                    </select>
+                </div>
+
+                <div class="resultados-lista" id="resultados-lista">
+                    
+                </div>
+            </div>
+        </div>
+        <div id="panel-autores-seguidos" style="display:none;">
+          <div class="main-panel-flex">
+            <aside id="autores-sidebar" class="input-panel">
+              <!-- Sidebar de autores seguidos -->
+            </aside>
+            <section id="autores-main-content" class="book-panel">
+              <div class="libros-flex">
+                <div class="books-list" id="my-read-books-grid">
+                  <h3 style="color: #f8991c; border-bottom: 2px solid #f8991c; padding-bottom: 0.5rem;">Libros Leídos</h3>
+                  <div id="read-books-content"></div>
+                </div>
+                <div class="books-list" id="my-toread-books-grid">
+                  <h3 style="color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem;">Quiero Leer</h3>
+                  <div id="toread-books-content"></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div id="panel-mis-libros" style="display:none;"></div>
+        <div id="panel-sugerencias" style="display:none;">
+            <div class="sugerencias-grid">
+                <!-- Las listas de sugerencias se insertarán aquí dinámicamente -->
+            </div>
+        </div>
+        <div class="resultado-detalle" id="resultado-detalle"></div>
+    </main>
+    
+    
+    <!-- 1. Carga la librería de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="libros.js"></script>
+    <script>
+    // Proteger acceso: redirigir a login si no está autenticado
+    window.addEventListener('DOMContentLoaded', async function() {
+      const SUPABASE_URL = 'https://pgpoykfqkmyljqztbwyu.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncG95a2Zxa215bGpxenRid3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5OTE0NzQsImV4cCI6MjA2NjU2NzQ3NH0.4aIPCEG85wNtQlJtZf7O2RfvT90UtzU81lddVldp8-4';
+      
+      // Configurar Supabase para usar sesiones que expiran al cerrar el navegador
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+          persistSession: true, // Mantener sesión durante el uso
+          autoRefreshToken: true, // Refrescar automáticamente
+          detectSessionInUrl: false // No detectar sesión en URL
+        }
+      });
+
+      // Redirigir a login si no está autenticado
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Mostrar saludo con email o nombre
+      const userInfo = document.getElementById('user-info-container');
+      const greeting = document.getElementById('user-greeting');
+      if (user && greeting) {
+        greeting.textContent = `Hola, ${user.email || user.id}`;
+        userInfo.style.display = 'flex';
+      }
+
+      // Función para cerrar sesión
+      document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        await limpiarSesionCompleta();
+      });
+
+      // Variables globales para la búsqueda
+    let lastQuery = '';
+    let currentAuthorBooks = [];
+    let followedAuthors = [];
+
+   
+
+      // --- FUNCIONES PARA SEGUIR AUTORES (USANDO SUPABASE) ---
+      async function getFollowedAuthors() {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) return [];
+              
+              const { data, error } = await supabase
+                  .from('autoresSeguidos')
+                  .select('autor')
+                  .eq('userID', user.id)
+                  .order('created_at', { ascending: false });
+              
+              if (error) throw error;
+              return data.map(a => a.autor);
+          } catch (error) {
+              console.error('Error al cargar autores seguidos:', error);
+              return [];
+          }
+      }
+
+      async function saveFollowedAuthors(authors) {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) return;
+              
+              // Primero eliminar todos los autores seguidos del usuario
+              await supabase
+                  .from('autoresSeguidos')
+                  .delete()
+                  .eq('userID', user.id);
+              
+              // Luego insertar los nuevos autores
+              if (authors.length > 0) {
+                  const autoresData = authors.map(autor => ({
+                      autor,
+                      userID: user.id
+                  }));
+                  
+                  const { error } = await supabase
+                      .from('autoresSeguidos')
+                      .insert(autoresData);
+                  
+                  if (error) throw error;
+              }
+          } catch (error) {
+              console.error('Error al guardar autores seguidos:', error);
+          }
+      }
+
+      async function isAuthorFollowed(authorName) {
+          const followed = await getFollowedAuthors();
+          return followed.includes(authorName);
+      }
+
+      async function toggleFollowAuthor(authorName, buttonElement) {
+          try {
+              let followed = await getFollowedAuthors();
+              if (await isAuthorFollowed(authorName)) {
+            // Unfollow
+            followed = followed.filter(name => name !== authorName);
+            buttonElement.textContent = 'Seguir Autor';
+            buttonElement.classList.remove('unfollow');
+        } else {
+            // Follow
+            followed.push(authorName);
+            buttonElement.textContent = 'Dejar de seguir';
+            buttonElement.classList.add('unfollow');
+        }
+              await saveFollowedAuthors(followed);
+          } catch (error) {
+              console.error('Error al cambiar estado de seguimiento:', error);
+          }
+      }
+
+      // --- FUNCIÓN PARA CONSULTAR LIBROS EN SUPABASE ---
+      async function cargarLibrosLeidos() {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) return [];
+              
+              const { data, error } = await supabase
+                  .from('libros')
+                  .select('*')
+                  .eq('userID', user.id);
+              
+              if (error) throw error;
+              
+              // Convertir los datos de Supabase al formato esperado por el código original
+              return data.map(libro => ({
+                  id: libro.id,
+                  title: libro.titulo,
+                  author: libro.autor,
+                  cover: libro.portada,
+                  sinopsis: libro.sinopsis,
+                  publishedDate: libro.fechaPublicacion,
+                  categories: libro.categoria ? [libro.categoria] : [],
+                  isRead: libro.YaLei,
+                  toRead: libro.VoyALeer,
+                  nota: libro.nota || '',
+                  rating: libro.rating || 0,
+                  addedAt: libro.created_at
+              }));
+          } catch (error) {
+              console.error('Error al cargar libros:', error);
+              return [];
+          }
+      }
+
+      // --- FUNCIÓN PARA CALCULAR SIMILARIDAD (IGUAL QUE ANTES) ---
+    function calculateSimilarity(title, author, query) {
+        const lowerCaseQuery = query.toLowerCase();
+        const lowerCaseTitle = title.toLowerCase();
+        const lowerCaseAuthor = author.toLowerCase();
+        let score = 0;
+
+        // Fuerte coincidencia si el título o autor comienza con la consulta
+        if (lowerCaseTitle.startsWith(lowerCaseQuery)) {
+            score += 10;
+        }
+        if (lowerCaseAuthor.startsWith(lowerCaseQuery)) {
+            score += 5;
+        }
+
+        // Bonificación por coincidencia de palabras completas
+        const queryWords = lowerCaseQuery.split(' ');
+        const titleWords = lowerCaseTitle.split(' ');
+        const authorWords = lowerCaseAuthor.split(' ');
+
+        queryWords.forEach(qWord => {
+            if (titleWords.includes(qWord)) {
+                score += 2;
+            }
+            if (authorWords.includes(qWord)) {
+                score += 1;
+            }
+        });
+
+        // Coincidencia exacta de la frase
+        if (lowerCaseTitle.includes(lowerCaseQuery)) {
+            score += 5;
+        }
+        if (lowerCaseAuthor.includes(lowerCaseQuery)) {
+            score += 2;
+        }
+
+        return score;
+    }
+
+      // --- FUNCIÓN PRINCIPAL DE BÚSQUEDA (IGUAL QUE ANTES) ---
+    async function performSearch(query, orderBy) {
+        const resultadosLista = document.getElementById('resultados-lista');
+        const apiIndicator = document.getElementById('api-indicator');
+        const sortControls = document.getElementById('sort-controls');
+
+        resultadosLista.innerHTML = '<p class="search-message">Buscando...</p>';
+        apiIndicator.textContent = 'Buscando en Google Books...';
+        apiIndicator.style.display = 'block';
+        sortControls.style.display = 'block';
+
+        const parseDate = (dateString) => {
+            if (!dateString || typeof dateString !== 'string') return null;
+            const parts = dateString.split('-');
+            if (parts.length === 0) return null;
+            const year = parseInt(parts[0], 10);
+            if (isNaN(year)) return null;
+            const month = parts.length > 1 ? parseInt(parts[1], 10) - 1 : 0;
+            const day = parts.length > 2 ? parseInt(parts[2], 10) : 1;
+            return new Date(Date.UTC(year, month, day));
+        };
+
+        try {
+            let finalQuery = query;
+            const wordCount = query.trim().split(' ').length;
+            const isSpecialQuery = query.includes('inauthor:') || query.includes('intitle:');
+
+            if (orderBy === 'newest' && wordCount <= 2 && !isSpecialQuery) {
+                finalQuery = `intitle:${query}`;
+            }
+
+            const useEbookFilter = wordCount < 4 && orderBy === 'relevance' && !isSpecialQuery;
+            let apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(finalQuery)}&orderBy=${orderBy}&maxResults=40&printType=books`;
+            if (useEbookFilter) {
+                apiUrl += '&filter=paid-ebooks';
+            }
+
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (!data.items || data.items.length === 0) {
+                resultadosLista.innerHTML = '<p class="search-message">No se encontraron resultados.</p>';
+                return;
+            }
+
+            let librosConPortada = data.items.filter(item => item.volumeInfo.imageLinks?.thumbnail);
+
+            if (orderBy === 'newest') {
+                librosConPortada.sort((a, b) => {
+                    const dateA = parseDate(a.volumeInfo.publishedDate);
+                    const dateB = parseDate(b.volumeInfo.publishedDate);
+                    return (dateB?.getTime() || 0) - (dateA?.getTime() || 0);
+                });
+            } else if (orderBy === 'relevance') {
+                librosConPortada.forEach(libro => {
+                    const title = libro.volumeInfo.title || '';
+                    const author = libro.volumeInfo.authors ? libro.volumeInfo.authors.join(' ') : '';
+                    libro.similarityScore = calculateSimilarity(title, author, query);
+                });
+                librosConPortada.sort((a, b) => b.similarityScore - a.similarityScore);
+            }
+
+            const librosAMostrar = librosConPortada.slice(0, 20);
+              const librosGuardados = await cargarLibrosLeidos();
+            resultadosLista.innerHTML = '';
+
+            librosAMostrar.forEach(item => {
+                const libro = {
+                    id: item.id,
+                    title: item.volumeInfo.title,
+                    author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Desconocido',
+                    cover: item.volumeInfo.imageLinks?.thumbnail || 'https://placehold.co/60x90?text=N/A',
+                    sinopsis: item.volumeInfo.description,
+                    publishedDate: item.volumeInfo.publishedDate || 'N/A',
+                    categories: item.volumeInfo.categories || []
+                };
+
+                const card = document.createElement('div');
+                card.className = 'book-search-card';
+                
+                let displayDate = libro.publishedDate || 'N/A';
+                if (libro.publishedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    const parts = libro.publishedDate.split('-');
+                    displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+
+                const yaLeido = librosGuardados.some(l => l.id && l.id === libro.id && l.isRead);
+                const enQuieroLeer = librosGuardados.some(l => l.id && l.id === libro.id && l.toRead);
+
+                card.innerHTML = `
+                    <img class="book-search-cover" src="${libro.cover}" alt="Portada de ${libro.title}">
+                    <div class="book-search-info">
+                        <h3 class="book-search-title">${libro.title}</h3>
+                        <p class="book-search-author">${libro.author}</p>
+                        <p class="book-search-date">Publicado: ${displayDate}</p>
+                    </div>
+                    <div class="book-search-actions">
+                        <button class="book-search-add-btn" ${yaLeido ? 'disabled' : ''}>${yaLeido ? 'Ya en tu biblioteca' : 'Ya lo leí'}</button>
+                        <button class="book-search-want-btn" ${enQuieroLeer ? 'disabled' : ''}>${enQuieroLeer ? 'Ya en "Quiero Leer"' : 'Lo quiero leer'}</button>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => mostrarPanelDetalleLibro(libro, card));
+                
+                const addBtn = card.querySelector('.book-search-add-btn');
+                if (!addBtn.disabled) {
+                    addBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        guardarLibro(libro, e.currentTarget);
+                    });
+                }
+                
+                const wantBtn = card.querySelector('.book-search-want-btn');
+                if (!wantBtn.disabled) {
+                    wantBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        guardarLibroToRead(libro, e.currentTarget);
+                    });
+                }
+                
+                const authorElement = card.querySelector('.book-search-author');
+                if (authorElement && libro.author !== 'Desconocido') {
+                    authorElement.classList.add('clickable-author');
+                    authorElement.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const firstAuthor = libro.author.split(',')[0].trim();
+                        mostrarDetalleAutor(firstAuthor, card);
+                    });
+                }
+                
+                resultadosLista.appendChild(card);
+            });
+        } catch (error) {
+            console.error("Error en la búsqueda:", error);
+            resultadosLista.innerHTML = '<p class="search-message">Ocurrió un error al realizar la búsqueda.</p>';
+        } finally {
+            apiIndicator.style.display = 'none';
+        }
+    }
+
+      // --- FUNCIÓN PARA MOSTRAR DETALLE DE AUTOR (IGUAL QUE ANTES) ---
+      async function mostrarDetalleAutor(authorName, elementoReferencia) {
+          document.querySelectorAll('.author-detail-panel').forEach(p => p.remove());
+          document.querySelectorAll('.panel-detalle-libro').forEach(p => p.remove());
+
+          const detallePanel = document.createElement('div');
+          detallePanel.className = 'author-detail-panel';
+
+          const isFollowed = await isAuthorFollowed(authorName);
+          const btnText = isFollowed ? 'Dejar de seguir' : 'Seguir Autor';
+          const btnClass = isFollowed ? 'autor-follow-btn unfollow' : 'autor-follow-btn';
+          const authorInitial = authorName.charAt(0).toUpperCase();
+
+          detallePanel.innerHTML = `
+              <button onclick="this.parentElement.remove()" style="position:absolute; top:1rem; right:1rem; background:transparent; border:none; color:#fff; font-size:2rem; cursor:pointer; z-index:2;">&times;</button>
+              <div class="author-photo-placeholder">${authorInitial}</div>
+              <div class="author-detail-info">
+                  <h2 style="color:#a29bfe; font-size:1.8rem; font-weight:700; margin:0;">${authorName}</h2>
+                  <p style="color:#ccc; font-size:1rem; margin:0;">Biografía no disponible en este momento.</p>
+                  <div class="author-detail-actions">
+                      <button class="${btnClass}" id="follow-author-detail-btn">${btnText}</button>
+                      <button class="book-search-add-btn" id="view-author-books-btn">Ver libros del autor</button>
+                  </div>
+              </div>
+          `;
+
+          elementoReferencia.parentNode.insertBefore(detallePanel, elementoReferencia.nextSibling);
+
+          detallePanel.querySelector('#follow-author-detail-btn').addEventListener('click', async (e) => {
+              await toggleFollowAuthor(authorName, e.target);
+          });
+
+          detallePanel.querySelector('#view-author-books-btn').addEventListener('click', () => {
+              document.getElementById('search-panel').style.display = 'block';
+              performAuthorSearch(authorName);
+              detallePanel.remove();
+          });
+
+          detallePanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      
+      // --- EVENT LISTENERS PARA LA BÚSQUEDA ---
+      document.getElementById('book-form').addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          const searchInput = document.getElementById('search-input');
+          const query = searchInput.value.trim();
+          const sortSelect = document.getElementById('sort-select');
+          const resultadosLista = document.getElementById('resultados-lista');
+
+          if (!query) {
+              resultadosLista.innerHTML = '<p class="search-message">Por favor, introduce un término de búsqueda.</p>';
+              return;
+          }
+          
+          lastQuery = query;
+          const orderBy = sortSelect.value;
+          
+          await performSearch(lastQuery, orderBy);
+      });
+
+      document.getElementById('sort-select').addEventListener('change', async function() {
+          if (lastQuery) {
+              const orderBy = this.value;
+              await performSearch(lastQuery, orderBy);
+          }
+      });
+
+      // --- FUNCIONES PARA GUARDAR LIBROS (USANDO SUPABASE) ---
+      async function guardarLibro(libro, btn) {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) {
+                  alert('Debes estar autenticado para guardar libros');
+                  return;
+              }
+
+              const libroData = {
+                  titulo: libro.title,
+                  autor: libro.author,
+                  portada: libro.cover,
+                  sinopsis: libro.sinopsis || '',
+                  fechaPublicacion: libro.publishedDate,
+                  categoria: libro.categories && libro.categories.length > 0 ? libro.categories[0] : 'Sin categoría',
+                  YaLei: true,
+                  VoyALeer: false,
+                  userID: user.id
+              };
+
+              const { error } = await supabase.from('libros').insert([libroData]);
+              if (error) throw error;
+
+              btn.textContent = 'Ya en tu biblioteca';
+              btn.disabled = true;
+              btn.style.backgroundColor = '#555';
+              
+              mostrarMensajeExito('Libro agregado a "Ya lo leí"');
+          } catch (error) {
+              console.error('Error al guardar libro:', error);
+              mostrarMensajeError('Error al guardar el libro: ' + error.message);
+          }
+      }
+
+      async function guardarLibroToRead(libro, btn) {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              if (!user) {
+                  alert('Debes estar autenticado para guardar libros');
+                  return;
+              }
+
+              const libroData = {
+                  titulo: libro.title,
+                  autor: libro.author,
+                  portada: libro.cover,
+                  sinopsis: libro.sinopsis || '',
+                  fechaPublicacion: libro.publishedDate,
+                  categoria: libro.categories && libro.categories.length > 0 ? libro.categories[0] : 'Sin categoría',
+                  YaLei: false,
+                  VoyALeer: true,
+                  userID: user.id
+              };
+
+              const { error } = await supabase.from('libros').insert([libroData]);
+              if (error) throw error;
+
+              btn.textContent = 'Ya en "Quiero Leer"';
+              btn.disabled = true;
+              btn.style.backgroundColor = '#555';
+              
+              mostrarMensajeExito('Libro agregado a "Quiero leer"');
+          } catch (error) {
+              console.error('Error al guardar libro en "Quiero Leer":', error);
+              mostrarMensajeError('Error al guardar el libro: ' + error.message);
+          }
+      }
+
+      // --- FUNCIONES AUXILIARES ---
+      function mostrarMensajeExito(mensaje) {
+          const mensajeDiv = document.createElement('div');
+          mensajeDiv.style.cssText = `
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              background: #2ecc71;
+              color: white;
+              padding: 1rem 1.5rem;
+              border-radius: 8px;
+              z-index: 10000;
+              font-weight: 500;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          `;
+          mensajeDiv.textContent = mensaje;
+          document.body.appendChild(mensajeDiv);
+
+          setTimeout(() => {
+              if (mensajeDiv.parentNode) {
+                  mensajeDiv.parentNode.removeChild(mensajeDiv);
+              }
+          }, 3000);
+      }
+
+      function mostrarMensajeError(mensaje) {
+          const mensajeDiv = document.createElement('div');
+          mensajeDiv.style.cssText = `
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              background: #e74c3c;
+              color: white;
+              padding: 1rem 1.5rem;
+              border-radius: 8px;
+              z-index: 10000;
+              font-weight: 500;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          `;
+          mensajeDiv.textContent = mensaje;
+          document.body.appendChild(mensajeDiv);
+
+          setTimeout(() => {
+              if (mensajeDiv.parentNode) {
+                  mensajeDiv.parentNode.removeChild(mensajeDiv);
+              }
+          }, 5000);
+      }
+
+      // --- FUNCIONALIDAD DEL MENÚ SUPERIOR ---
+      const menuButtons = {
+          'btn-buscar-libros': 'search-panel',
+          'btn-autores': 'panel-autores-seguidos',
+          'btn-libros-leidos': 'panel-mis-libros',
+          'btn-libros-a-leer': 'panel-mis-libros',
+          'btn-sugerencias': 'panel-sugerencias'
+      };
+
+      const navSlider = document.querySelector('.nav-slider');
+      let currentActiveButton = 'btn-buscar-libros';
+
+      // Función para cambiar de panel
+      function switchPanel(buttonId) {
+          // Eliminar logs de depuración
+          // if (buttonId === 'btn-libros-leidos') {
+          //     console.log('=== CLICK EN MENÚ "LIBROS LEÍDOS" ===');
+          //     console.log('Botón clickeado:', buttonId);
+          //     console.log('Panel a mostrar: panel-mis-libros');
+          //     console.log('Filtro a aplicar: read');
+          // }
+          // if (buttonId === 'btn-libros-a-leer') {
+          //     console.log('=== CLICK EN MENÚ "QUIERO LEER" ===');
+          //     console.log('Botón clickeado:', buttonId);
+          //     console.log('Panel a mostrar: panel-mis-libros');
+          //     console.log('Filtro a aplicar: toRead');
+          // }
+
+          // Ocultar todos los paneles
+          Object.values(menuButtons).forEach(panelId => {
+              const panel = document.getElementById(panelId);
+              if (panel) panel.style.display = 'none';
+          });
+
+          // Mostrar el panel correspondiente
+          const targetPanel = document.getElementById(menuButtons[buttonId]);
+          if (targetPanel) {
+              targetPanel.style.display = 'block';
+              
+              // Si es el panel de libros, cargar la vista correspondiente
+              if (buttonId === 'btn-libros-leidos' || buttonId === 'btn-libros-a-leer') {
+                  // Eliminar logs de depuración
+                  fetchLibros().then(libros => {
+                      // Eliminar logs de depuración
+                      const librosLeidosPanel = libros.filter(libro => libro.YaLei);
+                      const librosALeerPanel = libros.filter(libro => libro.VoyALeer);
+                      const filtro = buttonId === 'btn-libros-leidos' ? 'read' : 'toRead';
+                      const librosAMostrar = filtro === 'read' ? librosLeidosPanel : librosALeerPanel;
+                      // Log solicitado
+                      console.log('=== Libros mostrados en pantalla ===');
+                      console.log('Variable local: librosAMostrar');
+                      console.log('Cantidad:', librosAMostrar.length);
+                      console.log('Array completo:', librosAMostrar);
+                      librosAMostrar.forEach((libro, i) => {
+                        console.log(`Libro ${i+1} - ID: ${libro.id}`, libro);
+                      });
+                      renderBookshelfView(libros, filtro);
+                  });
+              }
+              
+              // Si es el panel de autores seguidos, cargar la vista
+              if (buttonId === 'btn-autores') {
+                  renderFollowedAuthorsView();
+              }
+              
+              // Si es el panel de sugerencias, cargar la vista
+              if (buttonId === 'btn-sugerencias') {
+                  renderSugerenciasView();
+              }
+          }
+
+          // Actualizar botones activos
+          document.querySelectorAll('.top-bar-btn').forEach(btn => {
+              btn.classList.remove('active');
+          });
+          document.getElementById(buttonId).classList.add('active');
+
+          // Mover el slider
+          updateSlider(buttonId);
+          currentActiveButton = buttonId;
+
+          // En la función switchPanel, después de mostrar el panel correspondiente:
+          document.getElementById('nyt-tabs-bar').style.display = (buttonId === 'btn-sugerencias') ? 'block' : 'none';
+      }
+
+      // Función para actualizar la posición del slider
+      function updateSlider(buttonId) {
+          const button = document.getElementById(buttonId);
+          if (button && navSlider) {
+              const buttonRect = button.getBoundingClientRect();
+              const navRect = button.parentElement.getBoundingClientRect();
+              
+              navSlider.style.left = (buttonRect.left - navRect.left) + 'px';
+              navSlider.style.width = buttonRect.width + 'px';
+              navSlider.style.backgroundColor = getComputedStyle(button).color;
+          }
+      }
+
+      // Agregar event listeners a todos los botones del menú
+      Object.keys(menuButtons).forEach(buttonId => {
+          document.getElementById(buttonId)?.addEventListener('click', () => {
+              switchPanel(buttonId);
+          });
+      });
+
+      // Inicializar el slider en la posición correcta
+      setTimeout(() => {
+          updateSlider(currentActiveButton);
+      }, 100);
+
+      // --- FUNCIÓN PARA BÚSQUEDA POR AUTOR (IGUAL QUE ANTES) ---
+    async function performAuthorSearch(authorName) {
+        const resultadosLista = document.getElementById('autores-resultados-lista');
+        const apiIndicator = document.getElementById('api-indicator-autores');
+        const languageFilterControls = document.querySelector('#autores-main-content #language-filter-controls');
+
+        if(languageFilterControls) languageFilterControls.style.display = 'block';
+        const langSelect = languageFilterControls?.querySelector('#language-select');
+        if(langSelect) langSelect.value = 'all';
+
+        resultadosLista.innerHTML = `<p class="search-message">Buscando todos los libros de ${authorName}...</p>`;
+        apiIndicator.textContent = `Buscando en Google Books...`;
+        apiIndicator.style.display = 'block';
+
+        try {
+            const allBooks = new Map();
+            let startIndex = 0;
+            const maxResultsPerPage = 40;
+            let keepFetching = true;
+
+            while (keepFetching && startIndex < 960) {
+                const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=inauthor:"${encodeURIComponent(authorName)}"&maxResults=${maxResultsPerPage}&startIndex=${startIndex}&printType=books`;
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.items) {
+                    data.items.forEach(item => {
+                        if (!allBooks.has(item.id)) {
+                            allBooks.set(item.id, item);
+                        }
+                    });
+                    startIndex += data.items.length;
+                    if (data.items.length < maxResultsPerPage || !data.totalItems || startIndex >= data.totalItems) {
+                        keepFetching = false;
+                    }
+                } else {
+                    keepFetching = false;
+                }
+            }
+
+            const uniqueBooks = Array.from(allBooks.values());
+
+            if (uniqueBooks.length === 0) {
+                resultadosLista.innerHTML = `<p class="search-message">No se encontraron libros para ${authorName}.</p>`;
+                apiIndicator.style.display = 'none';
+                return;
+            }
+
+            currentAuthorBooks = uniqueBooks.filter(item => {
+                const lang = item.volumeInfo.language;
+                return lang === 'es' || lang === 'en';
+            });
+
+            if (currentAuthorBooks.length === 0) {
+                resultadosLista.innerHTML = `<p class="search-message">No se encontraron libros en español o inglés para ${authorName}.</p>`;
+            } else {
+                  await renderAuthorBooks(currentAuthorBooks);
+            }
+        } catch (error) {
+            console.error("Error en la búsqueda por autor:", error);
+            resultadosLista.innerHTML = '<p class="search-message">Ocurrió un error al buscar los libros del autor.</p>';
+        } finally {
+            apiIndicator.style.display = 'none';
+        }
+    }
+
+      // --- FUNCIÓN PARA RENDERIZAR LIBROS DE AUTOR (IGUAL QUE ANTES) ---
+      async function renderAuthorBooks(books) {
+        const resultadosLista = document.getElementById('autores-resultados-lista');
+        resultadosLista.innerHTML = '';
+
+        const parseDate = (dateString) => {
+            if (!dateString || typeof dateString !== 'string') return null;
+            const parts = dateString.split('-');
+            const year = parseInt(parts[0], 10);
+            if (isNaN(year)) return null;
+            const month = parts.length > 1 ? parseInt(parts[1], 10) - 1 : 0;
+            const day = parts.length > 2 ? parseInt(parts[2], 10) : 1;
+            return new Date(Date.UTC(year, month, day));
+        };
+
+        const withCover = books.filter(item => item.volumeInfo.imageLinks?.thumbnail);
+        const withoutCover = books.filter(item => !item.volumeInfo.imageLinks?.thumbnail);
+
+        const sortByDate = (a, b) => (parseDate(b.volumeInfo.publishedDate)?.getTime() || 0) - (parseDate(a.volumeInfo.publishedDate)?.getTime() || 0);
+
+        withCover.sort(sortByDate);
+        withoutCover.sort(sortByDate);
+        
+        const librosAMostrar = [...withCover, ...withoutCover];
+          const librosGuardados = await cargarLibrosLeidos();
+
+        if (librosAMostrar.length === 0) {
+            resultadosLista.innerHTML = `<p class="search-message">No hay libros para el idioma seleccionado.</p>`;
+            return;
+        }
+
+        librosAMostrar.forEach(item => {
+            const libro = {
+                id: item.id,
+                title: item.volumeInfo.title,
+                author: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Desconocido',
+                cover: item.volumeInfo.imageLinks?.thumbnail || 'https://placehold.co/60x90?text=N/A',
+                sinopsis: item.volumeInfo.description,
+                publishedDate: item.volumeInfo.publishedDate || 'N/A',
+                categories: item.volumeInfo.categories || []
+            };
+            
+            let displayDate = libro.publishedDate || 'N/A';
+            if (libro.publishedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                const parts = libro.publishedDate.split('-');
+                displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            const yaLeido = librosGuardados.some(l => l.id && l.id === libro.id && l.isRead);
+            const enQuieroLeer = librosGuardados.some(l => l.id && l.id === libro.id && l.toRead);
+
+            const card = document.createElement('div');
+            card.className = 'book-search-card';
+            card.innerHTML = `
+                <img class="book-search-cover" src="${libro.cover}" alt="Portada de ${libro.title}">
+                <div class="book-search-info">
+                    <h3 class="book-search-title">${libro.title}</h3>
+                    <p class="book-search-author">${libro.author}</p>
+                    <p class="book-search-date">Publicado: ${displayDate}</p>
+                </div>
+                <div class="book-search-actions">
+                    <button class="book-search-add-btn" ${yaLeido ? 'disabled' : ''}>${yaLeido ? 'Ya en tu biblioteca' : 'Ya lo leí'}</button>
+                    <button class="book-search-want-btn" ${enQuieroLeer ? 'disabled' : ''}>${enQuieroLeer ? 'Ya en "Quiero Leer"' : 'Lo quiero leer'}</button>
+                </div>
+            `;
+
+            card.addEventListener('click', () => mostrarPanelDetalleLibro(libro, card));
+
+            const addBtn = card.querySelector('.book-search-add-btn');
+            if (!addBtn.disabled) {
+                addBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    guardarLibro(libro, e.currentTarget);
+                });
+            }
+
+            const wantBtn = card.querySelector('.book-search-want-btn');
+            if (!wantBtn.disabled) {
+                wantBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    guardarLibroToRead(libro, e.currentTarget);
+                });
+            }
+            
+            resultadosLista.appendChild(card);
+        });
+    }
+
+      // --- FUNCIÓN PARA SANITIZAR HTML (IGUAL QUE ANTES) ---
+      function sanitizeForHTML(libro) {
+          const sanitizedLibro = {};
+          for (const key in libro) {
+              if (typeof libro[key] === 'string') {
+                  sanitizedLibro[key] = libro[key].replace(/'/g, '&#39;');
+        } else {
+                  sanitizedLibro[key] = libro[key];
+              }
+          }
+          return sanitizedLibro;
+      }
+
+      // --- FUNCIÓN PARA LIMPIAR SESIÓN COMPLETA ---
+      async function limpiarSesionCompleta() {
+          try {
+              await supabase.auth.signOut();
+              localStorage.clear();
+              sessionStorage.clear();
+              window.location.href = 'login.html';
+      } catch (error) {
+              console.error('Error al cerrar sesión:', error);
+              // Forzar redirección de todas formas
+              window.location.href = 'login.html';
+          }
+      }
+
+      // --- EVENT LISTENER PARA FILTRO DE IDIOMA ---
+      document.getElementById('language-select')?.addEventListener('change', async (e) => {
+          const selectedLang = e.target.value;
+          if (selectedLang === 'all') {
+              await renderAuthorBooks(currentAuthorBooks);
+          } else {
+              const filteredBooks = currentAuthorBooks.filter(item => item.volumeInfo.language === selectedLang);
+              await renderAuthorBooks(filteredBooks);
+          }
+      });
+
+      // --- FUNCIONES PARA RENDERIZAR VISTAS (LLAMADAS DESDE libros.js) ---
+      window.renderBookshelfView = function(libros, filterType = 'all') {
+          const panel = document.getElementById('panel-mis-libros');
+          panel.innerHTML = '';
+
+          const allBooks = libros || [];
+          const books = allBooks.filter(book => {
+              if (filterType === 'read') return book.YaLei;
+              if (filterType === 'toRead') return book.VoyALeer;
+              return true;
+          });
+
+          // Contenedor principal
+          const container = document.createElement('div');
+          container.className = 'bookshelf-container';
+
+          // Controles de ordenación y filtro
+          const controls = document.createElement('div');
+          controls.className = 'bookshelf-controls';
+
+          // Extraer categorías únicas
+          const categories = ['Todas', ...new Set(books.map(b => b.categoria).filter(Boolean))];
+          
+          controls.innerHTML = `
+              <select id="sort-books-select">
+                  <option value="addedAt">Ordenar por Fecha de Adición</option>
+                  <option value="title">Ordenar por Título</option>
+                  <option value="author">Ordenar por Autor</option>
+              </select>
+              <select id="filter-category-select">
+                  ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+              </select>
+          `;
+
+          const bookshelf = document.createElement('div');
+          bookshelf.className = 'bookshelf';
+
+          container.appendChild(controls);
+          container.appendChild(bookshelf);
+          panel.appendChild(container);
+
+          const sortSelect = controls.querySelector('#sort-books-select');
+          const categorySelect = controls.querySelector('#filter-category-select');
+
+          function displayBooks(sortedAndFilteredBooks) {
+              bookshelf.innerHTML = '';
+              
+              if (sortedAndFilteredBooks.length === 0) {
+                  bookshelf.innerHTML = `<p style="color:#888; text-align:center;">No tienes libros en esta sección${categorySelect.value !== 'Todas' ? ` para la categoría '${categorySelect.value}'` : ''}.</p>`;
+                  return;
+              }
+
+              const shelf = document.createElement('div');
+              shelf.className = 'shelf';
+
+              sortedAndFilteredBooks.forEach(book => {
+
+                  const bookItem = document.createElement('div');
+                  bookItem.className = 'book-cover-item';
+                  bookItem.innerHTML = `
+                      <img src="${book.portada}" alt="Portada de ${book.titulo}">
+                      <div class="book-info-overlay">
+                          <h4 class="book-info-overlay-title">${book.titulo}</h4>
+                          <p class="book-info-overlay-author">${book.autor}</p>
+                      </div>
+                      <button class="delete-book-x" title="Borrar libro">&times;</button>
+                  `;
+                  // Click en la portada: abrir panel detalle
+                  bookItem.addEventListener('click', () => mostrarPanelDetalleLibro({
+                      title: book.titulo,
+                      author: book.autor,
+                      cover: book.portada,
+                      sinopsis: book.sinopsis,
+                      publishedDate: book.fechaPublicacion
+                  }, bookItem));
+                  // Click en la cruz: mostrar modal de borrar/mover
+                  const deleteBtn = bookItem.querySelector('.delete-book-x');
+                  if (deleteBtn) {
+                    deleteBtn.addEventListener('click', async function(e) {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      // Busca el libro en la lista global si es necesario
+                      let libro = book;
+                      // Si el libro está en Quiero Leer, mostrar modal personalizado
+                      if (libro.VoyALeer && !libro.YaLei && typeof mostrarModalMoverOBorrarLibro === 'function') {
+                        mostrarModalMoverOBorrarLibro(libro, async (accion) => {
+                          if (accion === 'borrar') {
+                            await borrarLibro(libro.id);
+                            mostrarMensajeExito('Libro borrado correctamente');
+                            fetchLibros().then(libros => renderBookshelfView(libros, 'toRead'));
+                          } else if (accion === 'mover') {
+                            await actualizarLibro(libro.id, { VoyALeer: false, YaLei: true });
+                            mostrarMensajeExito('Libro movido a "Libros Leídos"');
+                            fetchLibros().then(libros => renderBookshelfView(libros, 'toRead'));
+                          }
+                        });
+                        return;
+                      }
+                      // Si el libro está en Libros Leídos, mostrar modal de confirmación moderno
+                      if (libro.YaLei && typeof mostrarModalBorrarLibroLeido === 'function') {
+                        mostrarModalBorrarLibroLeido(libro, async (accion) => {
+                          if (accion === 'borrar') {
+                            await borrarLibro(libro.id);
+                            mostrarMensajeExito('Libro borrado correctamente');
+                            fetchLibros().then(libros => renderBookshelfView(libros, 'read'));
+                          }
+                        });
+                        return;
+                      }
+                      // Si no, no hacer nada
+                    });
+                  }
+                  shelf.appendChild(bookItem);
+              });
+              bookshelf.appendChild(shelf);
+          }
+
+          function updateView() {
+              let booksToDisplay = [...books];
+              const category = categorySelect.value;
+              const sortBy = sortSelect.value;
+
+              // Filtrar por categoría
+              if (category !== 'Todas') {
+                  booksToDisplay = booksToDisplay.filter(book => book.categoria === category);
+              }
+
+              // Ordenar
+              booksToDisplay.sort((a, b) => {
+                  if (sortBy === 'addedAt') {
+                      return new Date(b.created_at) - new Date(a.created_at);
+                  }
+                  if (sortBy === 'title') {
+                      return a.titulo.localeCompare(b.titulo);
+                  }
+                  if (sortBy === 'author') {
+                      return a.autor.localeCompare(b.autor);
+                  }
+                  return 0;
+              });
+              
+              displayBooks(booksToDisplay);
+          }
+
+          sortSelect.addEventListener('change', updateView);
+          categorySelect.addEventListener('change', updateView);
+
+          // Vista inicial
+          updateView();
+      };
+
+      // --- PANEL DE SUGERENCIAS NYT ---
+      window.renderSugerenciasView = async function() {
+        const panel = document.getElementById('panel-sugerencias');
+        panel.innerHTML = `<div class="nyt-bestsellers-list" id="nyt-books-list"></div>`;
+        const tabsBar = document.getElementById('nyt-tabs-bar');
+
+        // Listados NYT a mostrar
+        const nytLists = [
+          { id: 'audio-fiction', name: 'Audio Ficción' },
+          { id: 'hardcover-fiction', name: 'Ficción (Tapa Dura)' },
+          { id: 'combined-print-and-e-book-fiction', name: 'Ficción (Impreso y E-Book)' },
+          { id: 'young-adult-hardcover', name: 'Juvenil (Tapa Dura)' },
+          { id: 'graphic-books-and-manga', name: 'Libros Gráficos y Manga' }
+        ];
+
+        // Render tabs en nyt-tabs-bar
+        let tabsHtml = nytLists.map((l, i) => `<button class="nyt-tab${i===0?' active':''}" data-list="${l.id}">${l.name}</button>`).join('');
+        tabsBar.innerHTML = `<div class="nyt-tabs-row">${tabsHtml}</div>`;
+
+        const booksList = document.getElementById('nyt-books-list');
+
+        async function fetchNYTList(listId) {
+          booksList.innerHTML = '<div class="loading-indicator">Cargando...</div>';
+          try {
+            const apiKey = 'O5NwA24AcLYhKcrndMxcGyaT2lOfXwUR';
+            const url = `https://api.nytimes.com/svc/books/v3/lists/current/${listId}.json?api-key=${apiKey}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (!data.results || !data.results.books) {
+              booksList.innerHTML = '<div class="loading-indicator">No hay datos disponibles.</div>';
+              return;
+            }
+            booksList.innerHTML = data.results.books.map((book, idx) => `
+              <div class="nyt-book-item" data-title="${encodeURIComponent(book.title)}" data-author="${encodeURIComponent(book.author)}" data-description="${encodeURIComponent(book.description||'')}" data-cover="${encodeURIComponent(book.book_image)}">
+                <div style="flex:1;">
+                  <div style="font-size:2rem;font-weight:700;color:#888;">${idx+1}</div>
+                  <div style="font-size:1.3rem;font-weight:700;margin-bottom:0.2rem;">${book.title}</div>
+                  <div style="color:#ccc;font-size:1.05rem;margin-bottom:0.5rem;">por ${book.author}</div>
+                  <div style="color:#bbb;font-size:1rem;">${book.description||''}</div>
+                  ${book.contributor ? `<div style="color:#aaa;font-size:0.95rem;margin-top:0.5rem;">${book.contributor}</div>` : ''}
+                </div>
+                <div class="nyt-cover-image">
+                  <img src="${book.book_image}" alt="${book.title}" style="width:140px;border-radius:8px;box-shadow:0 2px 8px #0002;">
+                </div>
+              </div>
+            `).join('');
+
+            // Agregar event listener para abrir el modal de Google Books al hacer click en un libro
+            booksList.querySelectorAll('.nyt-book-item').forEach(item => {
+              item.style.cursor = 'pointer';
+              item.addEventListener('click', function() {
+                const libro = {
+                  title: decodeURIComponent(item.getAttribute('data-title')),
+                  author: decodeURIComponent(item.getAttribute('data-author')),
+                  description: decodeURIComponent(item.getAttribute('data-description')),
+                  cover: decodeURIComponent(item.getAttribute('data-cover'))
+                };
+                mostrarModalSugerenciaLibro(libro);
+              });
+            });
+          } catch (e) {
+            booksList.innerHTML = '<div class="loading-indicator">Error al cargar datos NYT.</div>';
+          }
+        }
+
+        // Tabs event
+        tabsBar.querySelectorAll('.nyt-tab').forEach(btn => {
+          btn.onclick = function() {
+            tabsBar.querySelectorAll('.nyt-tab').forEach(b=>b.classList.remove('active'));
+            btn.classList.add('active');
+            fetchNYTList(btn.dataset.list);
+          };
+        });
+
+        // Cargar el primer listado por defecto
+        fetchNYTList(nytLists[0].id);
+      };
+
+      // --- FUNCIÓN PARA RENDERIZAR VISTA DE AUTORES SEGUIDOS (IGUAL QUE ANTES) ---
+      async function renderFollowedAuthorsView() {
+        const sidebar = document.getElementById('autores-sidebar');
+        const mainContent = document.getElementById('autores-main-content');
+        const languageFilter = mainContent.querySelector('#language-filter-controls');
+
+        mainContent.innerHTML = `
+            <div id="autores-books-panel">
+                <div class="author-books-view">
+                    <div class="author-books-column">
+                        <h3 style="color: #f8991c; border-color: #f8991c;">Libros Leídos</h3>
+                        <div class="libros-grid" id="my-read-books-grid">
+                            <p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">Selecciona un autor de la lista.</p>
+                        </div>
+                    </div>
+                    <div class="author-books-column">
+                        <h3 style="color: #3498db; border-color: #3498db;">Quiero Leer</h3>
+                        <div class="libros-grid" id="my-toread-books-grid">
+                            <p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">Selecciona un autor de la lista.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        if(languageFilter) languageFilter.style.display = 'none';
+
+          const allMyBooks = await cargarLibrosLeidos();
+          let followedAuthorsRaw = await getFollowedAuthors();
+        let followedAuthors = [...new Set(followedAuthorsRaw.filter(author => author))];
+
+        const authorBookCounts = new Map();
+        followedAuthors.forEach(author => authorBookCounts.set(author, 0));
+        allMyBooks.forEach(book => {
+            if (book.author && authorBookCounts.has(book.author)) {
+                authorBookCounts.set(book.author, authorBookCounts.get(book.author) + 1);
+            }
+        });
+
+        let authorData = followedAuthors.map(name => ({
+            name,
+            bookCount: authorBookCounts.get(name) || 0
+        }));
+
+        sidebar.innerHTML = `
+            <div id="autores-sidebar-controls">
+                <input type="search" id="author-sidebar-search" placeholder="Buscar en mis autores...">
+                <select id="author-sidebar-sort">
+                    <option value="relevance">Ordenar por Relevancia</option>
+                    <option value="alphabetical">Ordenar Alfabéticamente</option>
+                </select>
+                        </div>
+            <ul id="followed-authors-list"></ul>
+        `;
+
+        const listContainer = sidebar.querySelector('#followed-authors-list');
+        const searchInput = sidebar.querySelector('#author-sidebar-search');
+        const sortSelect = sidebar.querySelector('#author-sidebar-sort');
+
+        function sortAuthors(sortBy) {
+            if (sortBy === 'relevance') {
+                authorData.sort((a, b) => b.bookCount - a.bookCount || a.name.localeCompare(b.name));
+        } else {
+                authorData.sort((a, b) => a.name.localeCompare(b.name));
+            }
+        }
+
+        function renderList(authorsToRender) {
+            listContainer.innerHTML = '';
+            if (authorsToRender.length === 0) {
+                listContainer.innerHTML = '<p style="color:#888; text-align:center; padding:1rem;">No sigues a ningún autor o ninguno coincide con la búsqueda.</p>';
+                return;
+            }
+            authorsToRender.forEach(author => {
+       const li = document.createElement('li');
+       li.dataset.authorName = author.name;
+       li.innerHTML = `
+         <div class="autor-list-row">
+           <span class="autor-nombre-lista">${author.name}</span>
+           <button class="autor-remove-btn" title="Dejar de seguir">&times;</button>
+         </div>
+       `;
+       // Evento para seleccionar autor
+       li.addEventListener('click', () => {
+           listContainer.querySelectorAll('li').forEach(item => item.classList.remove('active'));
+           li.classList.add('active');
+           renderMyBooksForAuthor(author.name);
+       });
+       // Evento para la cruz
+       li.querySelector('.autor-remove-btn').addEventListener('click', function(e) {
+           e.stopPropagation();
+           mostrarModalConfirmacionBorrarAutor(author.name, li);
+       });
+       listContainer.appendChild(li);
+   });
+        }
+
+        sortSelect.addEventListener('change', () => {
+            sortAuthors(sortSelect.value);
+            renderList(authorData.filter(author => author.name.toLowerCase().includes(searchInput.value.toLowerCase())));
+        });
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredData = authorData.filter(author => author.name.toLowerCase().includes(searchTerm));
+            renderList(filteredData);
+        });
+
+        sortAuthors('relevance');
+        renderList(authorData);
+        // Mostrar panel de libros vacío si no hay autor seleccionado
+        await renderMyBooksForAuthor(null);
+    }
+
+      // --- FUNCIÓN PARA RENDERIZAR LIBROS DE UN AUTOR ESPECÍFICO (IGUAL QUE ANTES) ---
+      async function renderMyBooksForAuthor(authorName) {
+        const readGrid = document.getElementById('my-read-books-grid');
+        const toReadGrid = document.getElementById('my-toread-books-grid');
+        readGrid.className = 'author-books-list';
+        toReadGrid.className = 'author-books-list';
+        if (!authorName) {
+            readGrid.innerHTML = '<p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">Selecciona un autor de la lista.</p>';
+            toReadGrid.innerHTML = '<p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">Selecciona un autor de la lista.</p>';
+            return;
+        }
+          const allMyBooks = await cargarLibrosLeidos();
+
+        const readBooks = allMyBooks.filter(book => book.author === authorName && book.isRead);
+        const toReadBooks = allMyBooks.filter(book => book.author === authorName && book.toRead);
+
+        // Ordenar por fecha de adición, más nuevos primero
+        readBooks.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+        toReadBooks.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+
+        readGrid.innerHTML = '';
+        if (readBooks.length > 0) {
+            readBooks.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'author-book-row';
+                const publishedDate = book.publishedDate ? new Date(book.publishedDate).toLocaleDateString() : 'Fecha no disponible';
+                bookElement.innerHTML = `
+                    <img src="${book.cover}" alt="Portada de ${book.title}" class="author-book-cover" onclick="mostrarPanelDetalleLibro(${JSON.stringify(sanitizeForHTML(book)).replace(/\"/g, '&quot;')}, this)">
+                    <div class="author-book-info">
+                        <h4>${book.title}</h4>
+                        <p>${publishedDate}</p>
+                        </div>
+                `;
+                readGrid.appendChild(bookElement);
+            });
+        } else {
+            readGrid.innerHTML = '<p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">No tienes libros leídos de este autor.</p>';
+        }
+
+        toReadGrid.innerHTML = '';
+        if (toReadBooks.length > 0) {
+            toReadBooks.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'author-book-row';
+                const publishedDate = book.publishedDate ? new Date(book.publishedDate).toLocaleDateString() : 'Fecha no disponible';
+                bookElement.innerHTML = `
+                    <img src="${book.cover}" alt="Portada de ${book.title}" class="author-book-cover" onclick="mostrarPanelDetalleLibro(${JSON.stringify(sanitizeForHTML(book)).replace(/\"/g, '&quot;')}, this)">
+                    <div class="author-book-info">
+                        <h4>${book.title}</h4>
+                        <p>${publishedDate}</p>
+                    </div>
+                `;
+                toReadGrid.appendChild(bookElement);
+            });
+        } else {
+            toReadGrid.innerHTML = '<p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">No tienes libros de este autor en "Quiero Leer".</p>';
+        }
+    }
+    });
+    </script>
+</body>
+</html>
