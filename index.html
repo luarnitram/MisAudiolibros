@@ -930,6 +930,14 @@
             <button id="btn-sugerencias" class="top-bar-btn" style="color: #e74c3c;">Sugerencias</button>
             <span class="nav-slider"></span>
         </div>
+        
+        <!-- Menú hamburger para móviles -->
+        <button class="hamburger-menu" id="hamburger-menu" aria-label="Menú de navegación">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
         <div class="user-info" id="user-info-container">
             <span id="user-greeting"></span>
             <button id="logout-btn" class="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
@@ -941,6 +949,9 @@
             </button>
         </div>
     </div>
+    
+    <!-- Overlay para el panel expandible -->
+    <div class="book-detail-overlay" id="book-detail-overlay"></div>
     <!-- Justo después del menú principal -->
     <div id="nyt-tabs-bar"></div>
     <main class="main-busqueda">
@@ -1857,7 +1868,7 @@
 
           // Extraer categorías únicas
           const categories = ['Todas', ...new Set(books.map(b => b.categoria).filter(Boolean))];
-          // hola
+          // hol
           controls.innerHTML = `
               <select id="sort-books-select">
                   <option value="addedAt">Ordenar por Fecha de Adición</option>
@@ -2234,7 +2245,103 @@
         } else {
             toReadGrid.innerHTML = '<p style="color: #888; font-style: italic; grid-column: 1 / -1; text-align: center; margin-top: 2rem;">No tienes libros de este autor en "Quiero Leer".</p>';
         }
-    }
+            }
+        
+        // ===== FUNCIONALIDAD DEL MENÚ HAMBURGER PARA MÓVILES =====
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const topBarNav = document.querySelector('.top-bar-nav');
+        
+        if (hamburgerMenu) {
+            hamburgerMenu.addEventListener('click', function() {
+                hamburgerMenu.classList.toggle('active');
+                topBarNav.classList.toggle('active');
+            });
+            
+            // Cerrar menú al hacer clic en un enlace
+            const navButtons = topBarNav.querySelectorAll('.top-bar-btn');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    hamburgerMenu.classList.remove('active');
+                    topBarNav.classList.remove('active');
+                });
+            });
+            
+            // Cerrar menú al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!hamburgerMenu.contains(e.target) && !topBarNav.contains(e.target)) {
+                    hamburgerMenu.classList.remove('active');
+                    topBarNav.classList.remove('active');
+                }
+            });
+        }
+        
+        // ===== MEJORAS PARA EL PANEL EXPANDIBLE EN MÓVILES =====
+        const bookDetailOverlay = document.getElementById('book-detail-overlay');
+        
+        if (bookDetailOverlay) {
+            bookDetailOverlay.addEventListener('click', function() {
+                cerrarPanelDetalleLibro();
+            });
+        }
+        
+        // Mejorar la función de cerrar panel para móviles
+        window.cerrarPanelDetalleLibro = function() {
+            const panel = document.querySelector('.book-detail-panel');
+            const overlay = document.getElementById('book-detail-overlay');
+            
+            if (panel) {
+                panel.style.display = 'none';
+            }
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+            
+            // Habilitar scroll del body
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Mejorar la función de mostrar panel para móviles
+        window.mostrarPanelDetalleLibro = function(libro, elemento) {
+            const panel = document.querySelector('.book-detail-panel');
+            const overlay = document.getElementById('book-detail-overlay');
+            
+            if (!panel || !overlay) return;
+            
+            // Crear contenido del panel
+            const contenido = `
+                <div class="book-detail-content">
+                    <div class="book-detail-left">
+                        <img src="${libro.cover}" alt="Portada de ${libro.title}" style="width: 120px; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                        <h3 class="book-detail-title">${libro.title}</h3>
+                        <p class="book-detail-author">${libro.author}</p>
+                    </div>
+                    <div class="book-detail-right">
+                        <div class="book-detail-rating">
+                            <span class="stars">
+                                ${[1,2,3,4,5].map(i => `<span class="star ${i <= (libro.calificacion || 0) ? 'filled' : 'empty'}">★</span>`).join('')}
+                            </span>
+                        </div>
+                        <div class="book-detail-synopsis">
+                            <p>${libro.sinopsis || 'Sin descripción disponible.'}</p>
+                        </div>
+                        <div class="book-detail-note">
+                            <p><strong>Nota:</strong> ${libro.notas || 'Sin notas.'}</p>
+                        </div>
+                        <div class="book-detail-buttons">
+                            <button class="book-detail-btn" onclick="borrarLibro('${libro.id}')">Borrar</button>
+                            <button class="book-detail-btn" onclick="cerrarPanelDetalleLibro()">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            panel.innerHTML = contenido;
+            panel.style.display = 'block';
+            overlay.style.display = 'block';
+            
+            // Deshabilitar scroll del body
+            document.body.style.overflow = 'hidden';
+        };
     });
     </script>
 </body>

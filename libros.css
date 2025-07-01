@@ -2117,3 +2117,359 @@ nav {
   text-align: center;
   position: relative;
 }
+
+/* ===== MEJORAS RESPONSIVE PARA MÓVILES ===== */
+
+/* Menú hamburger para móviles */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    color: #f5f5f5;
+}
+
+.hamburger-menu span {
+    width: 25px;
+    height: 3px;
+    background: #f5f5f5;
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* Panel expandible responsive */
+.book-detail-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #232526;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    padding: 2rem;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    border: 1px solid #333;
+}
+
+/* Overlay de fondo */
+.book-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    display: none;
+}
+
+/* Mejoras para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Header y navegación */
+    .hamburger-menu {
+        display: flex;
+    }
+    
+    .top-bar-nav {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: #232526;
+        flex-direction: column;
+        padding: 2rem;
+        transition: 0.3s;
+        z-index: 998;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+        border-radius: 0;
+    }
+    
+    .top-bar-nav.active {
+        left: 0;
+    }
+    
+    .top-bar-nav .top-bar-btn {
+        padding: 1rem 0;
+        border-bottom: 1px solid #333;
+        width: 100%;
+        text-align: center;
+        margin: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+    
+    .top-bar-nav .nav-slider {
+        display: none;
+    }
+    
+    /* Panel principal */
+    .main-panel {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .input-panel, .book-panel {
+        min-width: auto;
+        max-width: none;
+        width: 100%;
+    }
+    
+    /* Panel expandible móvil */
+    .book-detail-panel {
+        padding: 1.5rem;
+        max-width: 95vw;
+        max-height: 90vh;
+        border-radius: 12px;
+    }
+    
+    .book-detail-panel .book-detail-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .book-detail-panel .book-detail-left {
+        text-align: center;
+    }
+    
+    .book-detail-panel img {
+        width: 120px;
+        height: 180px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .book-detail-panel .book-detail-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .book-detail-panel .book-detail-btn {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        background: #f8991c;
+        color: #181a1b;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    
+    .book-detail-panel .book-detail-btn:hover {
+        background: #ffb347;
+    }
+    
+    .book-detail-panel .book-detail-btn:last-child {
+        background: #666;
+        color: #fff;
+    }
+    
+    .book-detail-panel .book-detail-btn:last-child:hover {
+        background: #888;
+    }
+    
+    /* Grid de libros */
+    .libros-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .libro-portada {
+        width: 100%;
+        height: 200px;
+    }
+    
+    .libro-titulo {
+        font-size: 0.9rem;
+        line-height: 1.3;
+        margin-top: 0.5rem;
+    }
+    
+    /* Búsqueda */
+    .search-panel {
+        padding: 1rem;
+    }
+    
+    .busqueda-campos-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .busqueda-campo {
+        width: 100%;
+    }
+    
+    .resultados-lista {
+        padding: 0 1rem;
+    }
+    
+    /* Botones touch-friendly */
+    .book-search-add-btn,
+    .book-search-want-btn,
+    .detalle-btn,
+    .book-detail-btn {
+        min-height: 44px;
+        padding: 0.8rem 1.2rem;
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+    
+    /* Tabs */
+    .tabs {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    
+    .tab-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .libros-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.8rem;
+        padding: 0.8rem;
+    }
+    
+    .libro-portada {
+        height: 180px;
+    }
+    
+    .libro-titulo {
+        font-size: 0.8rem;
+    }
+    
+    .book-detail-panel {
+        padding: 1rem;
+        max-width: 98vw;
+        max-height: 95vh;
+    }
+    
+    .book-detail-panel img {
+        width: 100px;
+        height: 150px;
+    }
+    
+    .nav-links {
+        padding: 1rem;
+    }
+    
+    .nav-links a {
+        font-size: 1.1rem;
+        padding: 1.2rem 0;
+    }
+    
+    /* Mejorar scroll en móviles */
+    .book-detail-panel {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Optimizar inputs para móviles */
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"] {
+        font-size: 16px; /* Evita zoom en iOS */
+        padding: 0.8rem;
+    }
+    
+    /* Botones más grandes para touch */
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .logout-btn {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* Mejoras para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .libros-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .main-panel {
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .book-detail-panel {
+        max-width: 80vw;
+        padding: 2rem;
+    }
+}
+
+/* Orientación landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .book-detail-panel {
+        max-height: 80vh;
+        padding: 1rem;
+    }
+    
+    .book-detail-panel .book-detail-content {
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+    }
+    
+    .book-detail-panel img {
+        width: 80px;
+        height: 120px;
+        margin: 0;
+    }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Modo oscuro mejorado para móviles */
+@media (prefers-color-scheme: dark) {
+    .book-detail-panel {
+        background: #1a1a1a;
+        border-color: #444;
+    }
+    
+    .nav-links {
+        background: #1a1a1a;
+    }
+}
