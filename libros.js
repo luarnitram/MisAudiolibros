@@ -115,28 +115,49 @@ async function dejarDeSeguirAutor(autor) {
 // FUNCIONES PARA GUARDAR LIBROS CON CAMPOS CORRECTOS
 async function guardarLibro(libroData, btn) {
     try {
-        if (typeof libroData === 'string') {
-            libroData = JSON.parse(libroData);
+        const user = await getCurrentUser();
+        const titulo = libroData.title || libroData.titulo || '';
+        const autor = libroData.author || libroData.autor || '';
+        // Buscar por título+autor+userID
+        const { data: existentes, error: errorExist } = await getSupabase()
+          .from('libros')
+          .select('*')
+          .eq('userID', user.id)
+          .eq('titulo', titulo)
+          .eq('autor', autor);
+        if (errorExist) throw errorExist;
+        if (existentes && existentes.length > 0) {
+          const libroExistente = existentes[0];
+          if (libroExistente.YaLei) {
+            mostrarMensajeError('Este libro ya está en "Libros Leídos".');
+            return;
+          } else if (libroExistente.VoyALeer) {
+            // Actualizar a YaLei: true, VoyALeer: false
+            await actualizarLibro(libroExistente.id, { YaLei: true, VoyALeer: false });
+            mostrarMensajeExito('Libro movido a "Libros Leídos".');
+            return;
+          }
         }
-        const volumeInfo = libroData.volumeInfo;
         const libro = {
-            // id: se genera automáticamente en la tabla
-            titulo: volumeInfo.title || 'Sin título',
-            autor: volumeInfo.authors ? volumeInfo.authors.join(', ') : 'Autor desconocido',
-            portada: volumeInfo.imageLinks?.thumbnail || '',
-            sinopsis: volumeInfo.description || '',
-            fechaPublicacion: volumeInfo.publishedDate || null,
-            categoria: volumeInfo.categories && volumeInfo.categories.length > 0 ? volumeInfo.categories[0] : 'Sin categoría',
+            titulo,
+            autor,
+            portada: libroData.cover || libroData.portada || '',
+            sinopsis: libroData.sinopsis || libroData.description || '',
+            fechaPublicacion: libroData.publishedDate || libroData.fechaPublicacion || null,
+            categoria: libroData.categories && libroData.categories.length > 0 ? libroData.categories[0] : 'Sin categoría',
             YaLei: true,
-            VoyALeer: false
+            VoyALeer: false,
+            userID: user.id
         };
         await agregarLibro(libro);
-        btn.textContent = 'Ya en tu biblioteca';
-        btn.disabled = true;
-        btn.style.backgroundColor = '#555';
-        const toReadBtn = btn.nextElementSibling;
-        if (toReadBtn && toReadBtn.textContent.includes('Ya en "Quiero Leer"')) {
-            btn.style.backgroundColor = '#2ecc71';
+        if (btn) {
+            btn.textContent = 'Ya en tu biblioteca';
+            btn.disabled = true;
+            btn.style.backgroundColor = '#555';
+            const toReadBtn = btn.nextElementSibling;
+            if (toReadBtn && toReadBtn.textContent.includes('Ya en "Quiero Leer"')) {
+                btn.style.backgroundColor = '#2ecc71';
+            }
         }
         mostrarMensajeExito('Libro agregado a "Ya lo leí"');
     } catch (error) {
@@ -147,27 +168,49 @@ async function guardarLibro(libroData, btn) {
 
 async function guardarLibroToRead(libroData, btn) {
     try {
-        if (typeof libroData === 'string') {
-            libroData = JSON.parse(libroData);
+        const user = await getCurrentUser();
+        const titulo = libroData.title || libroData.titulo || '';
+        const autor = libroData.author || libroData.autor || '';
+        // Buscar por título+autor+userID
+        const { data: existentes, error: errorExist } = await getSupabase()
+          .from('libros')
+          .select('*')
+          .eq('userID', user.id)
+          .eq('titulo', titulo)
+          .eq('autor', autor);
+        if (errorExist) throw errorExist;
+        if (existentes && existentes.length > 0) {
+          const libroExistente = existentes[0];
+          if (libroExistente.VoyALeer) {
+            mostrarMensajeError('Este libro ya está en "Quiero Leer".');
+            return;
+          } else if (libroExistente.YaLei) {
+            // Actualizar a VoyALeer: true (opcional: YaLei puede quedar true)
+            await actualizarLibro(libroExistente.id, { VoyALeer: true });
+            mostrarMensajeExito('Libro agregado a "Quiero Leer".');
+            return;
+          }
         }
-        const volumeInfo = libroData.volumeInfo;
         const libro = {
-            titulo: volumeInfo.title || 'Sin título',
-            autor: volumeInfo.authors ? volumeInfo.authors.join(', ') : 'Autor desconocido',
-            portada: volumeInfo.imageLinks?.thumbnail || '',
-            sinopsis: volumeInfo.description || '',
-            fechaPublicacion: volumeInfo.publishedDate || null,
-            categoria: volumeInfo.categories && volumeInfo.categories.length > 0 ? volumeInfo.categories[0] : 'Sin categoría',
+            titulo,
+            autor,
+            portada: libroData.cover || libroData.portada || '',
+            sinopsis: libroData.sinopsis || libroData.description || '',
+            fechaPublicacion: libroData.publishedDate || libroData.fechaPublicacion || null,
+            categoria: libroData.categories && libroData.categories.length > 0 ? libroData.categories[0] : 'Sin categoría',
             YaLei: false,
-            VoyALeer: true
+            VoyALeer: true,
+            userID: user.id
         };
         await agregarLibro(libro);
-        btn.textContent = 'Ya en "Quiero Leer"';
-        btn.disabled = true;
-        btn.style.backgroundColor = '#555';
-        const readBtn = btn.previousElementSibling;
-        if (readBtn && readBtn.textContent.includes('Ya en tu biblioteca')) {
-            btn.style.backgroundColor = '#2ecc71';
+        if (btn) {
+            btn.textContent = 'Ya en "Quiero Leer"';
+            btn.disabled = true;
+            btn.style.backgroundColor = '#555';
+            const readBtn = btn.previousElementSibling;
+            if (readBtn && readBtn.textContent.includes('Ya en tu biblioteca')) {
+                btn.style.backgroundColor = '#2ecc71';
+            }
         }
         mostrarMensajeExito('Libro agregado a "Quiero leer"');
     } catch (error) {
@@ -933,9 +976,32 @@ window.mostrarModalSugerenciaLibro = async function(libro) {
 async function guardarLibroDesdeSugerencia(libroData) {
   try {
     const user = await getCurrentUser();
+    const titulo = libroData.title || libroData.titulo || '';
+    const autor = libroData.author || libroData.autor || '';
+    // Buscar por título+autor+userID
+    const { data: existentes, error: errorExist } = await getSupabase()
+      .from('libros')
+      .select('*')
+      .eq('userID', user.id)
+      .eq('titulo', titulo)
+      .eq('autor', autor);
+    if (errorExist) throw errorExist;
+    if (existentes && existentes.length > 0) {
+      const libroExistente = existentes[0];
+      if (libroExistente.YaLei) {
+        mostrarMensajeError('Este libro ya está en "Libros Leídos".');
+        return;
+      } else if (libroExistente.VoyALeer) {
+        // Actualizar a YaLei: true, VoyALeer: false
+        await actualizarLibro(libroExistente.id, { YaLei: true, VoyALeer: false });
+        mostrarMensajeExito('Libro movido a "Libros Leídos".');
+        return;
+      }
+    }
+    // Si no existe, crear
     const libro = {
-      titulo: libroData.title || libroData.titulo || 'Sin título',
-      autor: libroData.author || libroData.autor || 'Autor desconocido',
+      titulo,
+      autor,
       portada: libroData.cover || libroData.portada || '',
       sinopsis: libroData.sinopsis || libroData.description || '',
       fechaPublicacion: libroData.publishedDate || libroData.fechaPublicacion || null,
@@ -955,9 +1021,32 @@ async function guardarLibroDesdeSugerencia(libroData) {
 async function guardarLibroToReadDesdeSugerencia(libroData) {
   try {
     const user = await getCurrentUser();
+    const titulo = libroData.title || libroData.titulo || '';
+    const autor = libroData.author || libroData.autor || '';
+    // Buscar por título+autor+userID
+    const { data: existentes, error: errorExist } = await getSupabase()
+      .from('libros')
+      .select('*')
+      .eq('userID', user.id)
+      .eq('titulo', titulo)
+      .eq('autor', autor);
+    if (errorExist) throw errorExist;
+    if (existentes && existentes.length > 0) {
+      const libroExistente = existentes[0];
+      if (libroExistente.VoyALeer) {
+        mostrarMensajeError('Este libro ya está en "Quiero Leer".');
+        return;
+      } else if (libroExistente.YaLei) {
+        // Actualizar a VoyALeer: true (opcional: YaLei puede quedar true)
+        await actualizarLibro(libroExistente.id, { VoyALeer: true });
+        mostrarMensajeExito('Libro agregado a "Quiero Leer".');
+        return;
+      }
+    }
+    // Si no existe, crear
     const libro = {
-      titulo: libroData.title || libroData.titulo || 'Sin título',
-      autor: libroData.author || libroData.autor || 'Autor desconocido',
+      titulo,
+      autor,
       portada: libroData.cover || libroData.portada || '',
       sinopsis: libroData.sinopsis || libroData.description || '',
       fechaPublicacion: libroData.publishedDate || libroData.fechaPublicacion || null,
@@ -1196,3 +1285,4 @@ function mostrarModalBorrarLibroLeido(libro, callback) {
   borrarBtn.onclick = () => { modal.remove(); callback('borrar'); };
 }
 
+l
