@@ -1362,7 +1362,7 @@ nav {
     
     .user-info #user-greeting {
         font-size: 0.8rem;
-        max-width: 120px;
+        max-width: 60px; /* Más restrictivo para móviles muy pequeños */
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -2302,6 +2302,10 @@ nav {
         color: #f8991c;
         font-weight: 500;
         font-size: 0.9rem;
+        max-width: 80px; /* Limitar ancho para truncar */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     /* Menú de navegación (oculto por defecto) */

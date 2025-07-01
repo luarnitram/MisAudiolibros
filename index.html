@@ -1053,9 +1053,40 @@
       const userInfo = document.getElementById('user-info-container');
       const greeting = document.getElementById('user-greeting');
       if (user && greeting) {
-        greeting.textContent = `Hola, ${user.email || user.id}`;
+        // Detectar si es móvil
+        const isMobile = window.innerWidth <= 768;
+        const userName = user.email || user.id;
+        
+        if (isMobile) {
+          // En móvil: mostrar solo el nombre sin "Hola"
+          greeting.textContent = userName;
+        } else {
+          // En desktop: mostrar "Hola, nombre"
+          greeting.textContent = `Hola, ${userName}`;
+        }
+        
         userInfo.style.display = 'flex';
       }
+      
+      // Función para actualizar el saludo según el tamaño de pantalla
+      async function updateGreeting() {
+        const greeting = document.getElementById('user-greeting');
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user && greeting) {
+          const isMobile = window.innerWidth <= 768;
+          const userName = user.email || user.id;
+          
+          if (isMobile) {
+            greeting.textContent = userName;
+          } else {
+            greeting.textContent = `Hola, ${userName}`;
+          }
+        }
+      }
+      
+      // Escuchar cambios en el tamaño de la ventana
+      window.addEventListener('resize', updateGreeting);
 
       // Función para cerrar sesión
       document.getElementById('logout-btn')?.addEventListener('click', async () => {
