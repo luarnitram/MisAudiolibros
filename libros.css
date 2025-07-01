@@ -1343,16 +1343,29 @@ nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        background: #232526;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
     
     .hamburger-menu {
-        margin-right: 0.5rem;
         order: 1;
+        margin-right: 0.5rem;
     }
     
     .user-info {
-        margin-left: auto;
         order: 3;
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .user-info #user-greeting {
+        font-size: 0.8rem;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .top-bar-nav {
@@ -2209,7 +2222,7 @@ nav {
 @media (max-width: 768px) {
     /* Header y navegación */
     .hamburger-menu {
-        display: flex;
+        display: flex !important; /* Forzar visibilidad en móviles */
     }
     
     .top-bar-nav {
@@ -2254,12 +2267,46 @@ nav {
         display: none;
     }
     
-    /* Mostrar el menú hamburger en la parte superior */
+    /* Layout del header cuando el menú hamburger está activo */
+    .top-bar-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+        background: #232526;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        position: relative;
+        z-index: 1000;
+    }
+    
+    /* Mostrar el menú hamburger en la parte superior izquierda */
     .hamburger-menu {
         position: relative;
         z-index: 999;
+        order: 1; /* Primero en la línea */
+    }
+    
+    /* Información del usuario a la derecha */
+    .user-info {
+        order: 3; /* Último en la línea */
         margin-left: auto;
-        margin-right: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #f8991c;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    .user-info #user-greeting {
+        color: #f8991c;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    /* Menú de navegación (oculto por defecto) */
+    .top-bar-nav {
+        order: 2;
     }
     
     /* Panel principal */
